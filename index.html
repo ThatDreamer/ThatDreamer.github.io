@@ -64,6 +64,70 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-leetcode84-柱状图中最大的矩形" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/06/01/leetcode84-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2/" class="article-date">
+  <time datetime="2023-06-01T08:42:19.000Z" itemprop="datePublished">2023-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/06/01/leetcode84-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2/">leetcode84.柱状图中最大的矩形</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>题目：</strong></p>
+<p>给定 <em>n</em> 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。求在该柱状图中，能够勾勒出来的矩形的最大面积。</p>
+<p><strong>示例1：</strong></p>
+<p><img src="/2023/06/01/leetcode84-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2/leetcode84-1.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：heights = [2,1,5,6,2,3]</span><br><span class="line">输出：10</span><br><span class="line">解释：最大的矩形为图中红色区域，面积为 10</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 &lt;= heights.length &lt;=105</span><br><span class="line">0 &lt;= heights[i] &lt;= 104</span><br></pre></td></tr></table></figure>
+
+<p><strong>思路1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">首先我们可以很容易想到，通过比较以每个柱子高度为顶的矩形面积来得到最大面积，而每个柱子i为顶就需要求对应的宽，也就是找柱子i左右最后一个大于等于它高度的柱子下标a和b，这样宽=b-a+1，面积=（b-a+1）*heights[i]。</span><br><span class="line">那么问题来了，怎么去找柱子i左右最后一个大于等于它高度的柱子？</span><br><span class="line">最简单的方法是直接遍历，以当前柱子i为起点，分别从左右两边遍历寻找，但这样总体时间复杂度是O(n^2)，对于题目的规模来说是不可行的。</span><br><span class="line">我们需要一种更高效的方法，单调栈就是这样的一个方法，它可以在O(n)的时间复杂度下让我们找到所有柱子对应的左右边界。</span><br><span class="line">我们维护一个单调递增栈，当要存放的元素tmp是大于等于栈顶元素top的时候，我们直接放入，反之我们不断弹出栈顶元素，直至栈顶元素大于等于该元素。这样对于弹出的栈顶元素top，tmp是第一个小于它的元素，那么最后大于它的元素就是tmp-1，在这里我们存入柱子下标，进行比较的则是下标对应的高度。</span><br><span class="line">这样我们通过正反两次就能找到左右对应的边界柱子了，在找的时候可以顺便计算左右面积，注意这样需要减去一个柱子本身的面积。</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">largestRectangleArea</span><span class="params">(<span class="type">int</span>[] heights)</span> &#123;</span><br><span class="line">        Deque&lt;Integer&gt; q = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br><span class="line">        q.addLast(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> heights.length;</span><br><span class="line">        <span class="type">int</span>[] area = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>; i&lt;=n; i++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> (i!=n)?heights[i]:-<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span>(!q.isEmpty() &amp;&amp; heights[q.getLast()]&gt;tmp)&#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">top</span> <span class="operator">=</span> q.removeLast();</span><br><span class="line">                area[top] += (i-top)*heights[top];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(i!=n)</span><br><span class="line">                q.addLast(i);</span><br><span class="line">        &#125;</span><br><span class="line">        q.addLast(n-<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=n-<span class="number">2</span>; i&gt;=-<span class="number">1</span>; i--)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> (i!=-<span class="number">1</span>)?heights[i]:-<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span>(!q.isEmpty() &amp;&amp; heights[q.getLast()]&gt;tmp)&#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">top</span> <span class="operator">=</span> q.removeLast();</span><br><span class="line">                area[top] += (top-i)*heights[top];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(i!=-<span class="number">1</span>)</span><br><span class="line">                q.addLast(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">            res = Math.max(res, area[i]-heights[i]);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>思路2：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以优化下，不用正反两次去找，在存放当前元素的时候，此时的栈顶元素就是它的左边界，那么只需要一次建栈即可完成寻找。</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">largestRectangleArea</span><span class="params">(<span class="type">int</span>[] heights)</span> &#123;</span><br><span class="line">        Deque&lt;Integer&gt; q = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br><span class="line">        q.addLast(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> heights.length;</span><br><span class="line">        <span class="type">int</span>[] area = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>; i&lt;=n; i++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> (i!=n)?heights[i]:-<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span>(!q.isEmpty() &amp;&amp; heights[q.getLast()]&gt;tmp)&#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">top</span> <span class="operator">=</span> q.removeLast();</span><br><span class="line">                area[top] += (i-top)*heights[top];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(i!=n)&#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">t</span> <span class="operator">=</span> q.isEmpty()?-<span class="number">1</span>:q.getLast();</span><br><span class="line">                area[i] += (i-t-<span class="number">1</span>)*heights[i];</span><br><span class="line">                q.addLast(i);</span><br><span class="line">            &#125;   </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">            res = Math.max(res, area[i]);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>来源：力扣（LeetCode）<br>链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/largest-rectangle-in-histogram">https://leetcode.cn/problems/largest-rectangle-in-histogram</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/06/01/leetcode84-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2/" data-id="clicw5l6e0000qguf41tg40o3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HOT-100/" rel="tag">HOT 100</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/leetcode/" rel="tag">leetcode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" rel="tag">单调栈</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-leetcode79-单词搜索" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2023/05/31/leetcode79-%E5%8D%95%E8%AF%8D%E6%90%9C%E7%B4%A2/" class="article-date">
@@ -280,7 +344,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HOT-100/" rel="tag">HOT 100</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leetcode/" rel="tag">leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%AA%E6%9E%9D/" rel="tag">剪枝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E6%BA%AF/" rel="tag">回溯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="tag">字符串</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%9A%E4%B8%BE/" rel="tag">枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" rel="tag">滑动窗口</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HOT-100/" rel="tag">HOT 100</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leetcode/" rel="tag">leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%AA%E6%9E%9D/" rel="tag">剪枝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" rel="tag">单调栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E6%BA%AF/" rel="tag">回溯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="tag">字符串</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%9A%E4%B8%BE/" rel="tag">枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" rel="tag">滑动窗口</a></li></ul>
     </div>
   </div>
 
@@ -290,7 +354,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/HOT-100/" style="font-size: 20px;">HOT 100</a> <a href="/tags/leetcode/" style="font-size: 20px;">leetcode</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 10px;">剪枝</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 15px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E6%9E%9A%E4%B8%BE/" style="font-size: 10px;">枚举</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 10px;">滑动窗口</a>
+      <a href="/tags/HOT-100/" style="font-size: 20px;">HOT 100</a> <a href="/tags/leetcode/" style="font-size: 20px;">leetcode</a> <a href="/tags/%E5%89%AA%E6%9E%9D/" style="font-size: 10px;">剪枝</a> <a href="/tags/%E5%8D%95%E8%B0%83%E6%A0%88/" style="font-size: 10px;">单调栈</a> <a href="/tags/%E5%9B%9E%E6%BA%AF/" style="font-size: 15px;">回溯</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" style="font-size: 10px;">字符串</a> <a href="/tags/%E6%9E%9A%E4%B8%BE/" style="font-size: 10px;">枚举</a> <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" style="font-size: 10px;">滑动窗口</a>
     </div>
   </div>
 
@@ -299,7 +363,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li></ul>
     </div>
   </div>
 
@@ -310,6 +374,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/06/01/leetcode84-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2/">leetcode84.柱状图中最大的矩形</a>
+          </li>
         
           <li>
             <a href="/2023/05/31/leetcode79-%E5%8D%95%E8%AF%8D%E6%90%9C%E7%B4%A2/">leetcode79.单词搜索</a>
